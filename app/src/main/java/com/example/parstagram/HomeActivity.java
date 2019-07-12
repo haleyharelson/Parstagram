@@ -9,11 +9,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.parstagram.fragments.ComposeFragment;
+import com.example.parstagram.fragments.PostsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
 public class HomeActivity extends AppCompatActivity {
+
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,44 +30,11 @@ public class HomeActivity extends AppCompatActivity {
         userNavigation();
 
         // Find the toolbar view inside the activity layout
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.topToolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         // Make sure the toolbar exists in the activity and is not null
-        //setSupportActionBar(toolbar);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.topToolbar);
         setSupportActionBar(toolbar);
 
-        logout(toolbar);
-    }
-
-    //bottom navigation bar
-    private void userNavigation() {
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomBar);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        Toast.makeText(HomeActivity.this, "Feed", Toast.LENGTH_SHORT).show();
-//                        final Intent homeIntent = new Intent(HomeActivity.this, HomeActivity.class);
-//                        startActivity(homeIntent);
-                        break;
-                    case R.id.action_post:
-                        Toast.makeText(HomeActivity.this, "Post", Toast.LENGTH_SHORT).show();
-                        final Intent postIntent = new Intent(HomeActivity.this, PostActivity.class);
-                        startActivity(postIntent);
-                        break;
-                    case R.id.action_profile:
-                        Toast.makeText(HomeActivity.this, "Profile", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                return true;
-            }
-        });
-    }
-
-    private void logout(Toolbar toolbar) {
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -77,6 +51,37 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
+    //bottom navigation bar
+    private void userNavigation() {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomBar);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = new ComposeFragment();
+                switch (item.getItemId()) {
+                    case R.id.action_home:
+                        fragment = new PostsFragment();
+                        Toast.makeText(HomeActivity.this, "Timeline", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.action_post:
+                        fragment = new ComposeFragment();
+                        Toast.makeText(HomeActivity.this, "Post", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.action_profile:
+                        fragment = new ComposeFragment();
+                        Toast.makeText(HomeActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                return true;
+            }
+        });
+        // Set default selection
+        bottomNavigationView.setSelectedItemId(R.id.action_home);
+    }
+
 
     // Menu icons are inflated just as they were with actionbar
     @Override
