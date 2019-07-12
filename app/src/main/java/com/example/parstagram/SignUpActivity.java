@@ -24,8 +24,6 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText usernameText;
     private EditText passwordText;
 
-    //TODO split this up
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +40,10 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        createAcct();
+    }
+
+    private void createAcct() {
         createAcct = findViewById(R.id.createAcct);
         usernameText = findViewById(R.id.usernameText);
         passwordText = findViewById(R.id.passwordText);
